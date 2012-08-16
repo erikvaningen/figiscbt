@@ -74,6 +74,9 @@ import org.apache.tools.ant.ProjectHelper;
  */
 public class CommonBuildFrameGit extends JFrame {
 
+	GitCheckout gitCheckout = new GitCheckout(); 
+	
+	
 	/**
 	 *
 	 */
@@ -133,7 +136,8 @@ public class CommonBuildFrameGit extends JFrame {
 
 	private static final String DEPLOYMENT_FILE_TMP = DEPLOYMENT_TRACK_DIR + "/deployment-file.tmp";
 
-	private static final String RELEASE_DIR = "//HQFILE1/figis/deployments";
+	private static final String RELEASE_DIR = "C:/workspaces/junoCbt/figiscbt/figis/deployments";
+//	private static final String RELEASE_DIR = "//HQFILE1/figis/deployments";
 
 	private JCheckBox buildFigisCheckBox;
 
@@ -153,9 +157,9 @@ public class CommonBuildFrameGit extends JFrame {
 
 	private JCheckBox defaultPropertiesCheckBox;
 
-	private JTextField rcsCheckOutTextField;
+	private JTextField gitCheckOutTextField;
 
-	private JButton rcsDirButton;
+	private JButton gitDirButton;
 
 	private JButton goButton;
 
@@ -181,7 +185,7 @@ public class CommonBuildFrameGit extends JFrame {
 
 	private JCheckBox buildCheckBox;
 
-	private JCheckBox rcsCheckBox;
+	private JCheckBox gitCheckBox;
 
 	private JTextField deployTextField;
 
@@ -328,14 +332,14 @@ public class CommonBuildFrameGit extends JFrame {
 							try {
 								addRelease(the_module_name, the_module_release);
 								choice = JOptionPane.showConfirmDialog(CommonBuildFrameGit.this,
-										"Do you want to mark the sources in RCS?", "Mark RCS",
+										"Do you want to mark the sources in GIT?", "Mark GIT",
 										JOptionPane.YES_NO_OPTION);
 								if (choice == JOptionPane.YES_OPTION) {
 									SwingWorker worker = new SwingWorker() {
 
 										public Object construct() {
 											try {
-												csrcsMark(the_module_name, the_module_release);
+												csgitMark(the_module_name, the_module_release);
 											} catch (Exception ex) {
 												JOptionPane.showMessageDialog(CommonBuildFrameGit.this,
 														"Exception caught:\n" + ex.getMessage(), "Error",
@@ -447,13 +451,13 @@ public class CommonBuildFrameGit extends JFrame {
 		}
 	}
 
-	private void loadRcsCheckOutTextField() {
-		chooser.setDialogTitle("Select the RCS check-out home directory...");
+	private void loadGitCheckOutTextField() {
+		chooser.setDialogTitle("Select the GIT check-out home directory...");
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int return_val = chooser.showOpenDialog(CommonBuildFrameGit.this);
 		if (return_val == JFileChooser.APPROVE_OPTION) {
 			try {
-				rcsCheckOutTextField.setText(chooser.getSelectedFile().getCanonicalPath());
+				gitCheckOutTextField.setText(chooser.getSelectedFile().getCanonicalPath());
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
@@ -548,7 +552,7 @@ public class CommonBuildFrameGit extends JFrame {
 		// String deployment_target_dir = deployTextField.getText();
 		String deployment_target_dir = getDeploymentTargetDir();
 		String src_dir = srcTextField.getText();
-		String rcs_dir = rcsCheckOutTextField.getText();
+		String git_dir = gitCheckOutTextField.getText();
 		String dist_dir = distTextField.getText();
 		String build_dir = buildTextField.getText();
 		boolean building_figis = buildFigisCheckBox.isSelected();
@@ -564,18 +568,36 @@ public class CommonBuildFrameGit extends JFrame {
 		project.setProperty("build.module.name", moduleName);
 		project.setProperty("build.module.release", moduleRelease);
 		if (!defaultPropertiesCheckBox.isSelected()) {
-			if (rcsCheckBox.isSelected()) {
-				project.setProperty("build.rcscheckout.enabled", "true");
+			if (gitCheckBox.isSelected()) {
+				project.setProperty("build.gitcheckout.enabled", "false");
 				if (!building_figis) {
-					project.setProperty("build.rcscheckout.dir", rcs_dir);
-					project.setProperty("build.src.dir", rcs_dir + "/src");
+					project.setProperty("build.gitcheckout.dir", git_dir);
+					project.setProperty("build.src.dir", git_dir + "/src");
+					gitCheckout.setExecute(true);
+					gitCheckout.setGitDir(git_dir);
+					gitCheckout.setGitSrcDir(git_dir + "/src"); 
 				}
 			} else {
-				project.setProperty("build.rcscheckout.enabled", "false");
+				project.setProperty("build.gitcheckout.enabled", "false");
 				if (!building_figis) {
 					project.setProperty("build.src.dir", src_dir);
+					gitCheckout.setGitSrcDir(git_dir + "/src"); 
+					gitCheckout.setExecute(false);
 				}
 			}
+
+			// if (gitCheckBox.isSelected()) {
+			// project.setProperty("build.gitcheckout.enabled", "true");
+			// if (!building_figis) {
+			// project.setProperty("build.gitcheckout.dir", git_dir);
+			// project.setProperty("build.src.dir", git_dir + "/src");
+			// }
+			// } else {
+			// project.setProperty("build.gitcheckout.enabled", "false");
+			// if (!building_figis) {
+			// project.setProperty("build.src.dir", src_dir);
+			// }
+			// }
 			if (buildCheckBox.isSelected()) {
 				if (!building_figis) {
 					project.setProperty("build.build.dir", build_dir);
@@ -858,16 +880,16 @@ public class CommonBuildFrameGit extends JFrame {
 				+ "/" + module_release + "/build");
 		distTextField.setText(properties.getProperty(DEFAULT_REPOSITORY_LOCATION_PROP) + "/modules/" + module_name
 				+ "/" + module_release + "/dist");
-		rcsCheckOutTextField.setText(properties.getProperty(DEFAULT_REPOSITORY_LOCATION_PROP) + "/modules/"
+		gitCheckOutTextField.setText(properties.getProperty(DEFAULT_REPOSITORY_LOCATION_PROP) + "/modules/"
 				+ module_name + "/" + module_release);
 		srcDirButton.setEnabled(false);
 		buildDirButton.setEnabled(true);
 		distDirButton.setEnabled(true);
-		rcsDirButton.setEnabled(true);
+		gitDirButton.setEnabled(true);
 		srcTextField.setEnabled(false);
 		buildTextField.setEnabled(true);
 		distTextField.setEnabled(true);
-		rcsCheckOutTextField.setEnabled(true);
+		gitCheckOutTextField.setEnabled(true);
 		setModuleReleaseComboBoxModel();
 	}
 
@@ -878,9 +900,9 @@ public class CommonBuildFrameGit extends JFrame {
 		createUserDir();
 	}
 
-	private void csrcsMark(String module, String release) throws Exception {
-		// call CSRCS Mark /pmodule /nrelease /q
-		String command = "CSRCS Mark /p\"" + module + "\" /n" + release + " /q";
+	private void csgitMark(String module, String release) throws Exception {
+		// call CSGIT Mark /pmodule /nrelease /q
+		String command = "CSGIT Mark /p\"" + module + "\" /n" + release + " /q";
 		Runtime.getRuntime().exec(command);
 	}
 
@@ -952,7 +974,7 @@ public class CommonBuildFrameGit extends JFrame {
 							distTextField.setText(properties.getProperty(DEFAULT_REPOSITORY_LOCATION_PROP)
 									+ "/modules/" + module_name + "/" + moduleReleaseComboBox.getSelectedItem()
 									+ "/dist");
-							rcsCheckOutTextField.setText(properties.getProperty(DEFAULT_REPOSITORY_LOCATION_PROP)
+							gitCheckOutTextField.setText(properties.getProperty(DEFAULT_REPOSITORY_LOCATION_PROP)
 									+ "/modules/" + module_name + "/" + moduleReleaseComboBox.getSelectedItem());
 						}
 					});
@@ -977,14 +999,14 @@ public class CommonBuildFrameGit extends JFrame {
 								try {
 									addRelease(module, new_release);
 									int choice = JOptionPane.showConfirmDialog(CommonBuildFrameGit.this,
-											"Do you want to mark the sources in RCS?", "Mark RCS",
+											"Do you want to mark the sources in GIT?", "Mark GIT",
 											JOptionPane.YES_NO_OPTION);
 									if (choice == JOptionPane.YES_OPTION) {
 										SwingWorker worker = new SwingWorker() {
 
 											public Object construct() {
 												try {
-													csrcsMark(module, new_release);
+													csgitMark(module, new_release);
 												} catch (Exception ex) {
 													JOptionPane.showMessageDialog(CommonBuildFrameGit.this,
 															"Exception caught:\n" + ex.getMessage(), "Error",
@@ -1152,13 +1174,13 @@ public class CommonBuildFrameGit extends JFrame {
 							srcDirButton.setEnabled(false);
 							buildDirButton.setEnabled(false);
 							distDirButton.setEnabled(false);
-							rcsDirButton.setEnabled(false);
+							gitDirButton.setEnabled(false);
 							srcTextField.setEnabled(false);
-							rcsCheckOutTextField.setEnabled(false);
+							gitCheckOutTextField.setEnabled(false);
 							srcTextField.setText(null);
 							buildTextField.setText(null);
 							distTextField.setText(null);
-							rcsCheckOutTextField.setText(null);
+							gitCheckOutTextField.setText(null);
 						} else {
 							moduleNameComboBox.setEnabled(true);
 							moduleReleaseComboBox.setEnabled(true);
@@ -1246,36 +1268,36 @@ public class CommonBuildFrameGit extends JFrame {
 				deployDirButton.setEnabled(false);
 				panel.add(deployDirButton);
 				deployDirButton.setText("...");
-				rcsDirButton = new JButton();
-				rcsDirButton.addActionListener(new ActionListener() {
+				gitDirButton = new JButton();
+				gitDirButton.addActionListener(new ActionListener() {
 
 					public void actionPerformed(ActionEvent e) {
-						loadRcsCheckOutTextField();
+						loadGitCheckOutTextField();
 					}
 				});
-				rcsDirButton.setBounds(30, 160, 25, 20);
-				panel.add(rcsDirButton);
-				rcsDirButton.setText("...");
-				rcsCheckOutTextField = new JTextField();
-				rcsCheckOutTextField.setBounds(55, 160, 165, 20);
-				panel.add(rcsCheckOutTextField);
-				rcsCheckBox = new JCheckBox();
-				rcsCheckBox.addItemListener(new ItemListener() {
+				gitDirButton.setBounds(30, 160, 25, 20);
+				panel.add(gitDirButton);
+				gitDirButton.setText("...");
+				gitCheckOutTextField = new JTextField();
+				gitCheckOutTextField.setBounds(55, 160, 165, 20);
+				panel.add(gitCheckOutTextField);
+				gitCheckBox = new JCheckBox();
+				gitCheckBox.addItemListener(new ItemListener() {
 
 					public void itemStateChanged(ItemEvent e) {
 						if (e.getStateChange() == ItemEvent.SELECTED) {
 							if (!buildFigisCheckBox.isSelected()) {
-								rcsDirButton.setEnabled(true);
-								rcsCheckOutTextField.setEnabled(true);
+								gitDirButton.setEnabled(true);
+								gitCheckOutTextField.setEnabled(true);
 							} else {
-								rcsDirButton.setEnabled(false);
-								rcsCheckOutTextField.setEnabled(false);
+								gitDirButton.setEnabled(false);
+								gitCheckOutTextField.setEnabled(false);
 							}
 							srcDirButton.setEnabled(false);
 							srcTextField.setEnabled(false);
 						} else {
-							rcsDirButton.setEnabled(false);
-							rcsCheckOutTextField.setEnabled(false);
+							gitDirButton.setEnabled(false);
+							gitCheckOutTextField.setEnabled(false);
 							if (!buildFigisCheckBox.isSelected()) {
 								srcDirButton.setEnabled(true);
 								srcTextField.setEnabled(true);
@@ -1286,10 +1308,10 @@ public class CommonBuildFrameGit extends JFrame {
 						}
 					}
 				});
-				rcsCheckBox.setBounds(30, 125, 170, 25);
-				rcsCheckBox.setSelected(true);
-				panel.add(rcsCheckBox);
-				rcsCheckBox.setText("RCS-checkout");
+				gitCheckBox.setBounds(30, 125, 170, 25);
+				gitCheckBox.setSelected(true);
+				panel.add(gitCheckBox);
+				gitCheckBox.setText("GIT-checkout");
 				bundleCheckBox = new JCheckBox();
 				bundleCheckBox.setBounds(255, 155, 170, 25);
 				bundleCheckBox.setSelected(true);

@@ -110,10 +110,10 @@
 	<target name="define-core-properties">
 		<tstamp/>
 		<!--
-		  RCS-checkout
+		  GIT-checkout
 		-->
-		<condition property="rcscheckout.task.enabled">
-		  <istrue value="${build.rcscheckout.enabled}"/>
+		<condition property="gitcheckout.task.enabled">
+		  <istrue value="${build.gitcheckout.enabled}"/>
 		</condition>
 		<!--
 		  jar
@@ -329,14 +329,14 @@
 	<!--
 	================================================
 	  
-	  rcs-checkout
+	  git-checkout
 	
 	================================================
 	-->
-	<target name="rcscheckout" if="rcscheckout.task.enabled" depends="define-core-properties, rcscheckout-direct" 
-		description="Checks-out sources from RCS"/>
-	<target name="rcscheckout-direct" if="rcscheckout.task.enabled">
-		<ant antfile="${commonbuild.includes.dir}/rcscheckout.build.xml" dir="${basedir}" target="rcscheckout-impl" inheritrefs="true" inheritall="true"/>
+	<target name="gitcheckout" if="gitcheckout.task.enabled" depends="define-core-properties, gitcheckout-direct" 
+		description="Checks-out sources from GIT"/>
+	<target name="gitcheckout-direct" if="gitcheckout.task.enabled">
+		<ant antfile="${commonbuild.includes.dir}/gitcheckout.build.xml" dir="${basedir}" target="gitcheckout-impl" inheritrefs="true" inheritall="true"/>
 	</target>
 	<!--
 	================================================
@@ -532,6 +532,6 @@
  
     ================================================
 	-->
-	<target name="all" depends="info, rcscheckout, build, dist, deploy" description="Common Build Tool"/>
+	<target name="all" depends="info, gitcheckout, build, dist, deploy" description="Common Build Tool"/>
 
 </project>

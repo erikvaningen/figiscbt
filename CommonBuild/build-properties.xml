@@ -57,7 +57,7 @@
         <checks file="${commonbuild.home.dir}/etc/figis-checks.xml"/>
         <style file="${commonbuild.home.dir}/etc/checkstyle-noframes.xsl"/>
     </checkstyle>
-    <rcscheckout dir="${build.home.dir}" enabled="true"/>
+    <gitcheckout dir="${build.home.dir}" enabled="true"/>
     <compile dir="${build.build.dir}/classes" enabled="true">
         <debug>on</debug>
         <optimize>off</optimize>

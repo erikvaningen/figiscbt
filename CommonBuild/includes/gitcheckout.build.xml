@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+
+   This build file provides GIT-checkout service.
+   
+   One public target :
+     gitcheckout-impl
+     
+-->     
+	<project name="gitcheckout" default="gitcheckout-impl">
+<!--
+	<property name="build.gitcheckout.dir" value="${build.home.dir}"/>
+-->
+	<echoproperties prefix="build.gitcheckout."/>
+
+	<target name="clean-gitcheckout">
+		<delete dir="${build.gitcheckout.dir}/src"/>
+		<delete dir="${build.gitcheckout.dir}/data"/>
+		<delete file="${build.gitcheckout.dir}/module.xml"/>
+		<delete file="${build.gitcheckout.dir}/module-deploy.xml"/>
+	</target>
+
+	<target name="reset-gitcheckout" depends="clean-gitcheckout">
+		<mkdir dir="${build.gitcheckout.dir}"/>
+	</target>
+	
+	<target name="gitcheckout-impl" depends="reset-gitcheckout" description="Checks-out the sources of this module">
+		<property name="CSGIT-line" value="Retrieve /p${build.module.name} /n${build.module.release} /a${build.gitcheckout.dir} /q"/>
+		<echo message="CSGIT ${CSGIT-line}"/>
+		<exec executable="CSGIT" output="GIT-checkout.out">
+			<arg line="${CSGIT-line}"/>
+		</exec>
+	</target>
+	
+</project>
