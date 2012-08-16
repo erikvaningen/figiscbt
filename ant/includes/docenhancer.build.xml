@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   This build file provide docenhancer service
+   
+   One public target :
+     docenhancer-impl
+     
+-->     
+<project default="docenhancer-impl" name="docenhancer">
+<!--
+	<property name="build.docenhancer.home" location="//HQFILE1/figis/tools/docenhancer"/>
+-->
+	<echoproperties prefix="build.docenhancer."/>
+
+	<!--
+    ================================================
+	  
+      docenhancer
+    
+    ================================================
+	-->
+	<target name="docenhancer-impl" description="Generates enhanced javadoc documentation.">
+		<delete dir="${build.docenhancer.dir}"/>
+		<mkdir dir="${build.docenhancer.dir}"/>
+		<path id="build.docenhancer.classpath">
+			<fileset dir="${build.docenhancer.home}/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		<property name="runtime.classpath.value" refid="module.classpath"/>
+		<taskdef name="docenhancer" classname="com.ibm.ejavadoc.wrappers.ant.EjavadocTask" classpathref="build.docenhancer.classpath"/>
+		<docenhancer javadoc_enhancer_path="${build.docenhancer.home}"
+			source_path="${build.api.dir}"
+            output_path="${build.docenhancer.dir}"
+            classfiles_paths_list="${build.compile.dir}"
+            runtime_paths_list="${runtime.classpath.value}"/>
+	</target>
+	
+</project>

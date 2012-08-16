@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+
+   This build file provides RCS-checkout service.
+   
+   One public target :
+     rcscheckout-impl
+     
+-->     
+	<project name="rcscheckout" default="rcscheckout-impl">
+<!--
+	<property name="build.rcscheckout.dir" value="${build.home.dir}"/>
+-->
+	<echoproperties prefix="build.rcscheckout."/>
+
+	<target name="clean-rcscheckout">
+		<delete dir="${build.rcscheckout.dir}/src"/>
+		<delete dir="${build.rcscheckout.dir}/data"/>
+		<delete file="${build.rcscheckout.dir}/module.xml"/>
+		<delete file="${build.rcscheckout.dir}/module-deploy.xml"/>
+	</target>
+
+	<target name="reset-rcscheckout" depends="clean-rcscheckout">
+		<mkdir dir="${build.rcscheckout.dir}"/>
+	</target>
+	
+	<target name="rcscheckout-impl" depends="reset-rcscheckout" description="Checks-out the sources of this module">
+		<property name="CSRCS-line" value="Retrieve /p${build.module.name} /n${build.module.release} /a${build.rcscheckout.dir} /q"/>
+		<echo message="CSRCS ${CSRCS-line}"/>
+		<exec executable="CSRCS" output="RCS-checkout.out">
+			<arg line="${CSRCS-line}"/>
+		</exec>
+	</target>
+	
+</project>

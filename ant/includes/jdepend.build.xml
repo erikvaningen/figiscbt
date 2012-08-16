@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   This build file provide jdepend service
+   
+   One public target :
+     jdepend-impl
+     
+-->     
+<project default="jdepend-impl" name="jdepend">
+<!--
+    <property name="build.jdepend.home"         location="//HQFILE1/figis/tools/jdepend-2.7"/>
+    <property name="build.jdepend.style.file"   location="${commonbuild.home.dir}/etc/jdepend.xsl"/>
+-->
+	<echoproperties prefix="build.jdepend."/>
+
+	<target name="clean-jdepend-dir">
+		<delete dir="${build.jdepend.dir}"/>
+	</target>
+	<target name="reset-jdepend-dir" depends="clean-jdepend-dir">
+		<mkdir dir="${build.jdepend.dir}"/>
+	</target>
+	
+	<!--
+    ================================================
+	  
+      jdepend 
+    
+    ================================================
+	-->
+	<target name="jdepend-impl" 
+		depends="jdepend-xml, jdepend-xdoc"  
+        description="Checks dependencies on code"/>
+	<target name="jdepend-xml" if="jdepend.task.enabled" description="Generates dependencies on code in XML format" depends="reset-jdepend-dir">
+		<property name="jdepend.work.dir" location="${build.jdepend.dir}/work"/>
+		<mkdir dir="${jdepend.work.dir}"/>
+		<!-- does not work : problem with classpath
+		jdepend fork="true" outputfile="${jdepend.work.dir}/jdepend-report.xml" format="xml" classpathref="jdepend.classpath">
+			<sourcespath>
+				<pathelement location="${bin.dir}"/>
+			</sourcespath>
+		</jdepend-->
+		<java classname="jdepend.xmlui.JDepend" fork="true" failonerror="true" maxmemory="128m">
+			<classpath>
+				<fileset dir="${build.jdepend.home}/lib">
+					<include name="*.jar"/>
+				</fileset>
+			<!--path refid="module.classpath"/-->
+			</classpath>
+			<arg line="-file ${jdepend.work.dir}/jdepend-report.xml"/>
+			<arg line="${build.compile.dir}"/>
+		</java>
+	</target>
+	<target name="jdepend-xdoc" depends="jdepend-xml" if="jdepend.task.enabled"
+		description="Generates metrics report in xdoc format">
+		<style in="${jdepend.work.dir}/jdepend-report.xml"
+			out="${build.jdepend.dir}/index.html"
+			style="${build.jdepend.style.file}"/>
+		<delete dir="${jdepend.work.dir}"/>
+	</target>
+</project>

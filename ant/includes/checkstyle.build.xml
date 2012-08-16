@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   This build file provide checkstyle service
+   
+   One public target :
+     checkstyle-impl
+     
+-->     
+<project default="checkstyle-impl" name="checkstyle">
+
+<!--
+    <property name="build.checkstyle.home"         location="//HQFILE1/figis/tools/checkstyle-3.4"/>
+    <property name="build.checkstyle.checks.file"  location="${commonbuild.home.dir}/etc/figis-checks.xml"/>
+    <property name="build.checkstyle.style.file"   location="${commonbuild.home.dir}/etc/checkstyle-noframes.xsl"/>
+-->
+	<echoproperties prefix="build.checkstyle."/>
+
+    
+	<target name="clean-checkstyle-dir">
+		<delete dir="${build.checkstyle.dir}"/>
+	</target>
+	<target name="reset-checkstyle-dir" depends="clean-checkstyle-dir">
+		<mkdir dir="${build.checkstyle.dir}"/>
+	</target>
+	
+	<!--
+    ================================================
+	  
+      checkstyle 
+    
+    ================================================
+	-->
+	<target name="checkstyle-impl" 
+		description="Generates a report of code convention violations."
+        depends="reset-checkstyle-dir">
+		<property name="checkstyle.work.dir" location="${build.checkstyle.dir}/work"/>
+		<mkdir dir="${checkstyle.work.dir}"/>
+		<path id="checkstyle.classpath">
+			<fileset dir="${build.checkstyle.home}">
+				<include name="**/*.jar"/>
+			</fileset>
+			<path refid="module.classpath"/>
+		</path>
+		<taskdef name="checkstyle" 
+			classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" 
+            classpathref="checkstyle.classpath"/>
+		<checkstyle config="${build.checkstyle.checks.file}" 
+			failureProperty="checkstyle.failure" 
+            failOnViolation="false">
+			<classpath refid="checkstyle.classpath"/>
+			<formatter type="xml" tofile="${checkstyle.work.dir}/checkstyle_report.xml"/>
+			<fileset dir="${build.src.java.dir}" includes="**/*.java"/>
+		</checkstyle>
+		<style in="${checkstyle.work.dir}/checkstyle_report.xml" 
+			out="${build.checkstyle.dir}/index.html" 
+			style="${build.checkstyle.style.file}"/>
+		<delete dir="${checkstyle.work.dir}"/>
+	</target>
+</project>

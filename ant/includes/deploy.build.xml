@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   This build file provides deployment service.
+   
+   Public targest :
+     deploy
+     
+-->     
+
+<project default="deploy" name="module-deploy">
+	
+	<!--property name="build.deploy.target" value="tomcat-devel"/-->
+	<property name="build.deploy.home.dir" value="${build.deploy.target}/webapps/figis/${build.module.name}"/>
+	
+	<property name="build.deploy.web-inf.dir" value="${build.deploy.home.dir}/WEB-INF"/>
+	<property name="build.deploy.jars.dir" value="${build.deploy.home.dir}/WEB-INF/lib"/>
+	<property name="build.deploy.config.dir" value="${build.deploy.home.dir}/WEB-INF/properties"/>
+	<property name="build.deploy.css.dir" value="${build.deploy.home.dir}/css"/>
+	<property name="build.deploy.xml.dir" value="${build.deploy.home.dir}/xml"/>
+	<property name="build.deploy.html.dir" value="${build.deploy.home.dir}/html"/>
+	<property name="build.deploy.imgs.dir" value="${build.deploy.home.dir}/img"/>
+	<property name="build.deploy.jsp.dir" value="${build.deploy.home.dir}/jsp"/>
+	<property name="build.deploy.xsl.dir" value="${build.deploy.home.dir}/xsl"/>
+	<property name="build.deploy.js.dir" value="${build.deploy.home.dir}/jsc"/>
+
+	<property name="build.deploy.jars.enabled" value="true"/>
+	<property name="build.deploy.xml.enabled" value="true"/>
+	<property name="build.deploy.xsl.enabled" value="true"/>
+	<property name="build.deploy.jsp.enabled" value="true"/>
+	<property name="build.deploy.html.enabled" value="true"/>
+	<property name="build.deploy.js.enabled" value="true"/>
+	<property name="build.deploy.imgs.enabled" value="true"/>
+	<property name="build.deploy.css.enabled" value="true"/>
+	<property name="build.deploy.web-inf.enabled" value="true"/>
+	<property name="build.deploy.config.enabled" value="true"/>
+	<property name="build.deploy.front-end.enabled" value="true"/>
+
+	<echoproperties prefix="build.deploy."/>
+	
+	<target name="check-target-property">
+		<fail message="build.deploy.target undefined" unless="build.deploy.target"/>	
+	</target>
+	
+	<target name="define-core-properties">
+		<tstamp/>
+		<condition property="deploy-jars.task.enabled">
+		  <istrue value="${build.deploy.jars.enabled}"/>
+		</condition>
+		<condition property="deploy-xml.task.enabled">
+		  <istrue value="${build.deploy.xml.enabled}"/>
+		</condition>
+		<condition property="deploy-xsl.task.enabled">
+		  <istrue value="${build.deploy.xsl.enabled}"/>
+		</condition>
+		<condition property="deploy-jsp.task.enabled">
+		  <istrue value="${build.deploy.jsp.enabled}"/>
+		</condition>
+		<condition property="deploy-html.task.enabled">
+		  <istrue value="${build.deploy.html.enabled}"/>
+		</condition>
+		<condition property="deploy-js.task.enabled">
+		  <istrue value="${build.deploy.js.enabled}"/>
+		</condition>
+		<condition property="deploy-imgs.task.enabled">
+		  <istrue value="${build.deploy.imgs.enabled}"/>
+		</condition>
+		<condition property="deploy-css.task.enabled">
+		  <istrue value="${build.deploy.css.enabled}"/>
+		</condition>
+		<condition property="deploy-web-inf.task.enabled">
+		  <istrue value="${build.deploy.web-inf.enabled}"/>
+		</condition>
+		<condition property="deploy-config.task.enabled">
+		  <istrue value="${build.deploy.config.enabled}"/>
+		</condition>
+		<condition property="deploy-front-end.task.enabled">
+		  <istrue value="${build.deploy.front-end.enabled}"/>
+		</condition>
+	</target>
+	<!--
+    ================================================
+
+      deploy
+ 
+    ================================================
+	-->
+	<target name="deploy" 
+		description="Module deployment"
+        depends="check-target-property, define-core-properties, deploy-web-inf, deploy-jars, deploy-config, deploy-css, deploy-js, deploy-imgs, deploy-xsl, deploy-jsp">
+	</target>
+	<!--
+		deploy-web-inf
+	-->
+	<target name="deploy-web-inf" if="deploy-web-inf.task.enabled">
+		<delete dir="${build.deploy.web-inf.dir}"/>
+		<mkdir dir="${build.deploy.web-inf.dir}"/>
+		<copy todir="${build.deploy.web-inf.dir}" includeEmptyDirs="no" failonerror="false">
+			<fileset dir="${build.dist.web-inf.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		deploy-jars
+	-->
+	<target name="deploy-jars" if="deploy-jars.task.enabled">
+		<delete dir="${build.deploy.jars.dir}"/>
+		<mkdir dir="${build.deploy.jars.dir}"/>
+		<copy todir="${build.deploy.jars.dir}" failonerror="false">
+			<fileset dir="${build.dist.jars.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${build.lib.dir}">
+				<include name="log4j-1.2.8.jar"/>
+				<include name="ojdbc14.jar"/>
+			</fileset>
+			<fileset dir="${build.rep.dir}/modules/RefService/PRO/dist/jars">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${build.rep.dir}/modules/FigisSecurity/PRO/dist/jars">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${build.rep.dir}/modules/FigisUtil/PRO/dist/jars">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		deploy-config
+	-->
+	<target name="deploy-config" if="deploy-config.task.enabled">
+		<delete dir="${build.deploy.config.dir}"/>
+		<mkdir dir="${build.deploy.config.dir}"/>
+		<copy todir="${build.deploy.config.dir}" failonerror="false">
+			<fileset dir="${build.dist.config.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		deploy-css
+	-->
+	<target name="deploy-css" if="deploy-css.task.enabled">
+		<delete dir="${build.deploy.css.dir}"/>
+		<mkdir dir="${build.deploy.css.dir}"/>
+		<copy todir="${build.deploy.css.dir}" failonerror="false">
+			<fileset dir="${build.dist.css.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		deploy-xsl
+	-->
+	<target name="deploy-xsl" if="deploy-xsl.task.enabled">
+		<delete dir="${build.deploy.xsl.dir}"/>
+		<mkdir dir="${build.deploy.xsl.dir}"/>
+		<copy todir="${build.deploy.xsl.dir}" failonerror="false">
+			<fileset dir="${build.dist.xsl.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		deploy-xml
+	-->
+	<target name="deploy-xml" if="deploy-xml.task.enabled">
+		<delete dir="${build.deploy.xml.dir}"/>
+		<mkdir dir="${build.deploy.xml.dir}"/>
+		<copy todir="${build.deploy.xml.dir}" failonerror="false">
+			<fileset dir="${build.dist.xml.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		deploy-jsp
+	-->
+	<target name="deploy-jsp" if="deploy-jsp.task.enabled">
+		<delete dir="${build.deploy.jsp.dir}"/>
+		<mkdir dir="${build.deploy.jsp.dir}"/>
+		<copy todir="${build.deploy.jsp.dir}" failonerror="false">
+			<fileset dir="${build.dist.jsp.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		deploy-html
+	-->
+	<target name="deploy-html" if="deploy-html.task.enabled">
+		<delete dir="${build.deploy.html.dir}"/>
+		<mkdir dir="${build.deploy.html.dir}"/>
+		<copy todir="${build.deploy.html.dir}" failonerror="false">
+			<fileset dir="${build.dist.html.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		deploy-imgs
+	-->
+	<target name="deploy-imgs" if="deploy-imgs.task.enabled">
+		<delete dir="${build.deploy.imgs.dir}"/>
+		<mkdir dir="${build.deploy.imgs.dir}"/>
+		<copy todir="${build.deploy.imgs.dir}" failonerror="false">
+			<fileset dir="${build.dist.imgs.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		deploy-js
+	-->
+	<target name="deploy-js" if="deploy-js.task.enabled">
+		<delete dir="${build.deploy.js.dir}"/>
+		<mkdir dir="${build.deploy.js.dir}"/>
+		<copy todir="${build.deploy.js.dir}" failonerror="false">
+			<fileset dir="${build.dist.js.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	
+</project>

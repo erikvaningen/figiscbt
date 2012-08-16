@@ -1,0 +1,537 @@
+<?xml version="1.0"?>
+<!--
+
+   This build file provides a generic build service.
+   It assumes a common structure for a project based on the following directories
+   organization :
+     /module
+       /src              : where are stored the sources
+         /java           : the java source files
+         /docs           : the documentation
+         /dynamic
+         /static
+         /properties
+         /...            : module's specific dirs
+       /build            : the output of the build
+         /classes        : where the java classes are compiled
+         /jars           : where the jar files are packaged
+         /bundle         : where the resource bundle jar files are packaged
+         /jdocs          : the output of the java docs
+           /api          : the javadoc
+           /jdepend      : the jdepend output
+           /checkstyle   : the checkstyle output
+           /java2html    : the java source files in html
+           /junit        : the junit test reports
+       /dist             : the distribution
+         /jdocs          : the output of the java docs
+           /api          : the javadoc
+           /jdepend      : the jdepend output
+           /checkstyle   : the checkstyle output
+           /java2html    : the java source files in html
+           /junit        : the junit test reports
+         /jars           : the jar files
+         /bundle         : the resource bundle jar files
+         /zip            : the zip files
+         /src            : module's specific dirs
+           /java         : the java source files
+           /docs         : the documentation
+           /dynamic
+           /static
+           /properties
+           /...          : module's specific dirs
+
+  The build offers targets to produce standard reports on the code including jDepend and CheckStyle.
+  It uses java2HTML to produces html version of the source code.
+
+
+-->     
+<project name="build" default="info" basedir=".">
+
+	<property name="commonbuild.home.dir" value="//HQFILE1/figis/commonbuild"/>
+	<property name="commonbuild.includes.dir" value="${commonbuild.home.dir}/includes"/>
+	
+	
+	<!--property name="commonbuild.properties.file" value="build.properties"/-->
+	<!--property file="${commonbuild.properties.file}"/-->
+	<xmlproperty file="${user.xmlproperties.file}" collapseAttributes="true" semanticAttributes="true"/>
+	<property file="${user.properties.file}"/>
+	<echo message="user properties loaded"/>
+	
+	<property name="commonbuild.properties.file" value="build-properties.xml"/>
+	<xmlproperty file="${commonbuild.properties.file}" collapseAttributes="true" semanticAttributes="true"/>
+	<echo message="default properties loaded"/>
+	
+	<!-- Set the directory for dependent libraries -->
+	<property name="build.localrep.dir" value="${build.home.dir}/localrep"/>
+
+	<target name="info">
+		<echoproperties prefix="build."/>
+	</target>
+
+	<target name="tokenize">
+		<script language="javascript"> <![CDATA[
+			importClass(java.util.StringTokenizer);
+			params = new StringTokenizer(build.getProperty("params"), ":");
+			name = params.nextToken();
+			release = params.nextToken();
+			build.setProperty("dependent.name", name);
+			build.setProperty("dependent.release", release);
+			]]>
+		</script>
+	</target>
+		
+	<target name="init" description="init the build process">
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		  <classpath>
+		    <pathelement location="//HQFILE1/figis/tools/apache-ant-1.6.1/lib/ant-contrib-0.6.jar"/>
+		  </classpath>
+		</taskdef>
+	</target>
+
+	<target name="clean-all" depends="clean-build, clean-dist" description="cleans all the directories">
+	</target>
+	<target name="clean-classes">
+		<delete dir="${build.compile.dir}"/>
+	</target>
+	<target name="clean-jars">
+		<delete dir="${build.jars.dir}"/>
+	</target>
+	<target name="clean-bundle">
+		<delete dir="${build.bundle.dir}"/>
+	</target>
+	<target name="clean-localrep">
+		<delete dir="${build.localrep.dir}"/>
+	</target>
+	<target name="clean-dist">
+		<delete dir="${build.dist.dir}"/>
+	</target>
+	<target name="clean-build" depends="clean-classes, clean-jars, clean-bundle, clean-localrep"/>
+
+	<target name="define-core-properties">
+		<tstamp/>
+		<!--
+		  RCS-checkout
+		-->
+		<condition property="rcscheckout.task.enabled">
+		  <istrue value="${build.rcscheckout.enabled}"/>
+		</condition>
+		<!--
+		  jar
+		-->
+		<condition property="jars.task.enabled">
+		  <istrue value="${build.jars.enabled}"/>
+		</condition>
+		<!--
+		  bundle
+		-->
+		<condition property="bundle.task.enabled">
+		  <istrue value="${build.bundle.enabled}"/>
+		</condition>
+		<!--
+		  jdepend 
+		-->
+		<condition property="jdepend.task.enabled">
+		  <istrue value="${build.jdepend.enabled}"/>
+		</condition>
+		<!--
+		  java2html 
+		-->
+		<condition property="java2html.task.enabled">
+		  <istrue value="${build.java2html.enabled}"/>
+		</condition>
+		<!--
+		  checkstyle
+		-->
+		<condition property="checkstyle.task.enabled">
+		  <istrue value="${build.checkstyle.enabled}"/>
+		</condition>
+		<!--
+		  junit
+		-->
+		<condition property="junit.task.enabled">
+		  <istrue value="${build.junit.enabled}"/>
+		</condition>
+		<!--
+		  javadoc
+		-->
+		<condition property="javadoc.task.enabled">
+		  <istrue value="${build.api.enabled}"/>
+		</condition>
+		<!--
+		  docenhancer
+		-->
+		<condition property="docenhancer.task.enabled">
+		  <istrue value="${build.docenhancer.enabled}"/>
+		</condition>
+		<!--
+		  build
+		-->
+		<condition property="build.task.enabled">
+          <istrue value="${build.build.enabled}"/>
+		</condition>
+		<!--
+		  distribute
+		-->
+		<condition property="dist.task.enabled">
+		  <istrue value="${build.dist.enabled}"/>
+		</condition>
+		<!--
+		  deploy
+		-->
+		<condition property="deploy.task.enabled">
+		  <istrue value="${build.deploy.enabled}"/>
+		</condition>
+	</target>
+
+	<!--
+    ================================================
+  
+      classpath definition
+          
+    ================================================
+	-->
+	<!--
+	<target name="check-base-lib-dir">
+	    <available file="${build.lib.dir}" type="dir" property="base.lib.dir.exists"/>
+	</target>
+	<target name="define-base-classpath" depends="check-base-lib-dir" if="base.lib.dir.exists">
+		<path id="base.classpath">
+			<fileset dir="${build.lib.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+	    <property name="the.base.path" refid="base.classpath"/>
+	    <echo>the base classpath is: ${the.base.path}</echo>
+	</target>
+	<target name="check-common-lib-dir">
+	    <available file="${build.lib.dir}/common" type="dir" property="common.lib.dir.exists"/>
+	</target>
+	<target name="define-common-classpath" depends="check-common-lib-dir" if="common.lib.dir.exists">
+		<path id="common.classpath">
+			<fileset dir="${build.lib.dir}/common">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+	    <property name="the.common.path" refid="common.classpath"/>
+	    <echo>the common classpath is: ${the.common.path}</echo>
+	</target>
+	<target name="check-private-lib-dir">
+	    <available file="${build.lib.dir}/${build.module.name}" type="dir" property="private.lib.dir.exists"/>
+	</target>
+	<target name="define-private-classpath" depends="check-private-lib-dir" if="private.lib.dir.exists">
+		<path id="private.classpath">
+			<fileset dir="${build.lib.dir}/${build.module.name}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</path>
+	    <property name="the.private.path" refid="private.classpath"/>
+	    <echo>the private classpath is: ${the.private.path}</echo>
+	</target>
+	-->
+	
+	<!--
+      dependent classpath definition
+	-->
+	<target name="define-dependent-classpath" depends="getjars">
+		<path id="dependent.classpath">
+			<fileset dir="${build.localrep.dir}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</path>
+	    <property name="the.dependent.path" refid="dependent.classpath"/>
+	    <echo>the dependent classpath is: ${the.dependent.path}</echo>
+	</target>
+	
+	<!--
+      module classpath definition
+	-->
+	<target name="define-module-classpath" depends="define-dependent-classpath">
+		<path id="module.classpath">
+		    <path refid="dependent.classpath"/>
+			<fileset dir="${build.lib.dir}">
+				<include name="${build.module.name}/**/*.jar"/>
+			</fileset>
+			<fileset dir="${build.lib.dir}">
+				<include name="common/**/*.jar"/>
+			</fileset>
+			<fileset dir="${build.lib.dir}">
+				<include name="*.jar"/>
+			</fileset>
+	    </path>
+	    <property name="the.module.path" refid="module.classpath"/>
+	    <echo>the global module classpath is: ${the.module.path}</echo>
+	</target>
+	
+	<!--
+    ================================================
+	  
+      load module properties
+    
+    ================================================
+	-->
+	<target name="check-module-descriptor">
+	    <available file="${build.home.dir}/module.xml" type="file" property="module.descriptor.exists"/>
+	</target>
+	<target name="load-module-properties" depends="check-module-descriptor"  if="module.descriptor.exists">
+		<xmlproperty file="${build.home.dir}/module.xml"/>
+		<echo>module properties loaded</echo>
+	</target>		
+
+	<target name="reset-localrep" depends="clean-localrep">
+		<mkdir dir="${build.localrep.dir}"/>
+	</target>
+	<target name="reset-classes" depends="clean-classes">
+		<mkdir dir="${build.compile.dir}"/>
+	</target>
+	<target name="reset-jars" depends="clean-jars">
+		<mkdir dir="${build.jars.dir}"/>
+	</target>
+	<target name="reset-bundle" depends="clean-bundle">
+		<mkdir dir="${build.bundle.dir}"/>
+	</target>
+	<target name="reset-dist" depends="clean-dist">
+		<mkdir dir="${build.dist.dir}"/>
+	</target>
+	<target name="reset-build" depends="clean-build">
+		<mkdir dir="${build.build.dir}"/>
+	</target>
+	
+	
+	<!--
+	================================================
+	  
+	  getjars
+	
+	================================================
+	-->
+	<target name="getjars" depends="init, load-module-properties, reset-localrep" if="module.descriptor.exists" description="downloads dependent jars from the remote repository">
+		<echo>dependencies: ${module.dependencies.module}</echo>
+		<for list="${module.dependencies.module}" param="dependent" delimiter=",">
+			<sequential>
+				<echo>dependent=@{dependent}</echo>
+				<antcallback target="tokenize" return="dependent.name, dependent.release">
+					<param name="params" value="@{dependent}"/>
+				</antcallback>
+				<echo>${dependent.name}[${dependent.release}]</echo>
+				<copy todir="${build.localrep.dir}">
+					<fileset dir="${build.rep.dir}/modules/${dependent.name}/${dependent.release}/dist/jars">
+						<include name="**/*.jar"/>
+					</fileset>
+				</copy>
+			</sequential>
+		</for>
+    </target>
+
+	<target name="cleanjars" description="removes all downloaded jars from the local repository">
+		<delete dir="${build.localrep.dir}"/>
+	</target>
+    
+	<!--
+	================================================
+	  
+	  rcs-checkout
+	
+	================================================
+	-->
+	<target name="rcscheckout" if="rcscheckout.task.enabled" depends="define-core-properties, rcscheckout-direct" 
+		description="Checks-out sources from RCS"/>
+	<target name="rcscheckout-direct" if="rcscheckout.task.enabled">
+		<ant antfile="${commonbuild.includes.dir}/rcscheckout.build.xml" dir="${basedir}" target="rcscheckout-impl" inheritrefs="true" inheritall="true"/>
+	</target>
+	<!--
+	================================================
+	  
+	  jdepend
+	
+	================================================
+	-->
+	<target name="jdepend" if="jdepend.task.enabled" depends="compile, jdepend-direct" 
+		description="Checks dependencies on code"/>
+	<target name="jdepend-direct" if="jdepend.task.enabled">
+		<ant antfile="${commonbuild.includes.dir}/jdepend.build.xml" dir="${basedir}" target="jdepend-impl" inheritrefs="true"/>
+	</target>
+	<!--
+	================================================
+	  
+	  java2html
+
+	================================================
+	-->
+	<target name="java2html" if="java2html.task.enabled" depends="define-core-properties, java2html-direct" 
+		description="Generates source java files in the html format"/>
+	<target name="java2html-direct" if="java2html.task.enabled">
+		<ant antfile="${commonbuild.includes.dir}/java2html.build.xml" dir="${basedir}" target="java2html-impl" inheritrefs="true"/>
+	</target>
+	<!--
+	================================================
+	  
+	  checkstyle
+	
+	================================================
+	-->
+	<target name="checkstyle" if="checkstyle.task.enabled" depends="define-core-properties, checkstyle-direct" 
+		description="Generates a report of code convention violations."/>
+	<target name="checkstyle-direct" if="checkstyle.task.enabled">
+		<ant antfile="${commonbuild.includes.dir}/checkstyle.build.xml" dir="${basedir}" target="checkstyle-impl" inheritrefs="true"/>
+	</target>
+	<!--
+	================================================
+	  
+	  compile
+	
+	================================================
+	-->
+	<target name="compile" depends="define-core-properties, reset-classes, define-module-classpath, compile-direct, clean-localrep" description="Compile all source code"/>
+	<target name="compile-direct">
+		<ant antfile="${commonbuild.includes.dir}/compile.build.xml" dir="${basedir}" target="compile-impl" inheritrefs="true"/>
+	</target>
+	<!--
+	================================================
+	  
+	  javadocs
+	
+	================================================
+	-->
+	<target name="javadoc" depends="define-core-properties, javadoc-direct" if="javadoc.task.enabled"
+		description="Output all Javadoc"/>
+	<target name="javadoc-direct" if="javadoc.task.enabled">
+		<ant antfile="${commonbuild.includes.dir}/javadoc.build.xml" dir="${basedir}" target="javadoc-impl" inheritrefs="true"/>
+	</target>
+	<!--
+	================================================
+	
+	  docenhancer
+	
+	================================================
+	-->
+	<target name="docenhancer" if="docenhancer.task.enabled"
+		depends="compile, javadoc-direct, docenhancer-direct" 
+		description="Enhances Javadoc"/>
+	<target name="docenhancer-direct" if="docenhancer.task.enabled">
+		<ant antfile="${commonbuild.includes.dir}/docenhancer.build.xml" dir="${basedir}" target="docenhancer-impl" inheritrefs="true"/>
+	</target>
+	<!--
+	================================================
+	  
+	  junit
+	
+	================================================
+	-->
+	<target name="junit" depends="compile, junit-direct" if="junit.task.enabled" 
+		description="Performs all unit test using JUnit"/>
+	<target name="junit-direct" if="junit.task.enabled">
+		<ant antfile="${commonbuild.includes.dir}/junit.build.xml" dir="${basedir}" target="junit-impl" inheritrefs="true"/>
+	</target>
+	<!--
+	================================================
+	  
+	  forrest
+	
+	================================================
+	-->
+	<!--target name="forrest" depends="define-core-properties, forrest-direct" if="forrest.task.enabled"
+		description="Generates static HTML documentation"/>
+	<target name="forrest-direct" if="forrest.task.enabled">
+		<ant antfile="${commonbuild.includes.dir}/forrest.build.xml" dir="${basedir}" target="forrest-impl" inheritRefs="true"/>
+	</target-->
+
+	<!--
+	================================================
+      package-jar
+	================================================
+	-->
+	<target name="package-jar" depends="reset-jars, package-jar-direct" if="jars.task.enabled">
+	</target>
+	<target name="package-jar-direct" if="jars.task.enabled">
+		<jar jarfile="${build.jars.dir}/${build.module.name}.jar">
+			<fileset dir="${build.compile.dir}">
+				<include name="**"/>
+				<exclude name="**/*class~"/>
+			</fileset>
+			<fileset dir="${build.src.java.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<!--
+	================================================
+      package-bundle-jar
+	================================================
+	-->
+	<target name="package-bundle-jar" depends="reset-bundle, package-bundle-jar-direct" if="bundle.task.enabled">
+	</target>
+	<target name="package-bundle-jar-direct" if="bundle.task.enabled">
+		<jar jarfile="${build.bundle.dir}/${build.module.name}-bundle.jar">
+			<!-- for resource bundle -->
+			<fileset dir="${build.src.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<!--
+    ================================================
+
+      build
+ 
+    ================================================
+	-->
+	<target name="build" if="build.task.enabled" description="Builds the module" depends="init">
+        <!--antcall target="reset-build"/-->
+        <if>
+            <available file="${build.src.java.dir}" type="dir"/>
+            <then>
+        			<antcall target="compile"/>
+        			<antcall target="javadoc-direct"/>
+        			<antcall target="docenhancer-direct"/>
+        			<antcall target="junit-direct"/>
+        			<antcall target="java2html-direct"/>
+        			<antcall target="jdepend-direct"/>
+        			<antcall target="checkstyle-direct"/>
+        			<antcall target="package-jar"/>
+        	</then>
+        	<else>
+        	    <echo message="WARNING: ${build.src.java.dir} does not exist"/>
+        	</else>
+        </if>
+        <antcall target="package-bundle-jar"/>
+	</target>
+	<!--
+    ================================================
+
+      dist
+ 
+    ================================================
+	-->
+	<target name="dist" if="dist.task.enabled" description="Package the distribution of this module">
+		<antcall target="reset-dist"/>
+		<antcall target="dist-direct"/>
+	</target>
+	<target name="dist-direct">
+		<ant antfile="${commonbuild.includes.dir}/dist.build.xml" dir="${basedir}" target="dist-impl" inheritrefs="true"/>
+	</target>
+
+	<!--
+    ================================================
+
+      deploy
+ 
+    ================================================
+	-->
+	<target name="deploy" if="deploy.task.enabled" description="Deploy the distribution of this module">
+		<ant antfile="${build.home.dir}/module-deploy.xml" dir="${basedir}" inheritrefs="true"/>
+	</target>
+
+	<!--
+    ================================================
+
+      all
+ 
+    ================================================
+	-->
+	<target name="all" depends="info, rcscheckout, build, dist, deploy" description="Common Build Tool"/>
+
+</project>

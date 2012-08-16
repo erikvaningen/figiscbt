@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   This build file provides dist service.
+   
+   Public targest :
+     dist-impl
+     dist-jar-impl
+     
+-->     
+<project default="dist-impl" name="dist">
+
+	<echoproperties prefix="build.dist."/>
+	
+	<target name="define-core-properties">
+		<tstamp/>
+		<condition property="dist-src.task.enabled">
+		  <istrue value="${build.dist.src.enabled}"/>
+		</condition>
+		<condition property="dist-data.task.enabled">
+		  <istrue value="${build.dist.data.enabled}"/>
+		</condition>
+		<condition property="dist-jars.task.enabled">
+		  <istrue value="${build.dist.jars.enabled}"/>
+		</condition>
+		<condition property="dist-bundle.task.enabled">
+		  <istrue value="${build.dist.bundle.enabled}"/>
+		</condition>
+		<condition property="dist-libs.task.enabled">
+		  <istrue value="${build.dist.lib.enabled}"/>
+		</condition>
+		<condition property="dist-jdocs.task.enabled">
+		  <istrue value="${build.dist.jdocs.enabled}"/>
+		</condition>
+		<condition property="dist-zip.task.enabled">
+		  <istrue value="${build.dist.zip.enabled}"/>
+		</condition>
+		<condition property="dist-isprod.task.enabled">
+		  <istrue value="${build.dist.production.enabled}"/>
+		</condition>
+	</target>
+	<!--
+    ================================================
+
+      dist
+ 
+    ================================================
+	-->
+	<target name="dist-impl" 
+		description="Package the distribution of this project"
+        depends="define-core-properties, dist-copy-jars, dist-copy-bundle, dist-copy-libs, dist-copy-jdocs, dist-copy-src, dist-copy-data, dist-zip, dist-copy-production">
+	</target>
+	<!--
+		dist-copy-jars
+	-->
+	<target name="dist-copy-jars" description="Copy the module's generated jars" if="dist-jars.task.enabled">
+    <delete dir="${build.dist.jars.dir}"/>
+	  <mkdir dir="${build.dist.jars.dir}"/>
+		<copy todir="${build.dist.jars.dir}" failonerror="false">
+			<fileset dir="${build.jars.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		dist-copy-bundle
+	-->
+	<target name="dist-copy-bundle" description="Copy the module's generated bundles" if="dist-bundle.task.enabled">
+    <delete dir="${build.dist.bundle.dir}"/>
+	  <mkdir dir="${build.dist.bundle.dir}"/>
+		<copy todir="${build.dist.bundle.dir}" failonerror="false">
+			<fileset dir="${build.bundle.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		dist-copy-libs
+	-->
+	<target name="dist-copy-libs" description="Copy the module's libraries" if="dist-libs.task.enabled">
+	  <delete dir="${build.dist.lib.dir}"/>
+	  <mkdir dir="${build.dist.lib.dir}"/>
+		<copy todir="${build.dist.lib.dir}" failonerror="false">
+			<fileset dir="${build.localrep.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${build.lib.dir}/${build.module.name}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		dist-copy-jdoc
+	-->
+	<target name="dist-copy-jdocs" description="Copy the module's generated java docs and metrics"  if="dist-jdocs.task.enabled">
+	  <delete dir="${build.dist.jdocs.dir}"/>
+	  <mkdir dir="${build.dist.jdocs.dir}"/>
+		<copy todir="${build.dist.jdocs.dir}" includeEmptyDirs="no" failonerror="false">
+			<fileset dir="${build.jdocs.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		dist-copy-src
+	-->
+	<target name="dist-copy-src" description="Copy the module's source files" if="dist-src.task.enabled">
+	  <delete dir="${build.dist.src.dir}"/>
+	  <mkdir dir="${build.dist.src.dir}"/>
+		<copy todir="${build.dist.src.dir}" includeEmptyDirs="no" failonerror="false">
+			<fileset dir="${build.src.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+		dist-copy-data
+	-->
+	<target name="dist-copy-data" description="Copy the module's data files" if="dist-data.task.enabled">
+	  <delete dir="${build.dist.data.dir}"/>
+	  <mkdir dir="${build.dist.data.dir}"/>
+		<copy todir="${build.dist.data.dir}" includeEmptyDirs="no" failonerror="false">
+			<fileset dir="${build.data.dir}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!--
+     dist-zip
+	-->
+	<target name="dist-zip" description="Make a zip of the module's distribution" if="dist-zip.task.enabled">
+		<mkdir dir="${build.dist.zip.dir}"/>
+		<property name="zipfilename" value="${build.dist.zip.dir}/${build.module.name}-${build.module.release}.zip"/>
+		<zip zipfile="${zipfilename}" excludes="${zipfilename}">
+			<zipfileset dir="${build.dist.dir}"/>
+		</zip>
+	</target>
+	<!--
+     dist-copy-production
+	-->
+	<target name="dist-copy-production" if="dist-isprod.task.enabled">
+		<delete dir="${build.dist.production.dir}"/>
+		<mkdir dir="${build.dist.production.dir}"/>
+		<copy todir="${build.dist.production.dir}" includeEmptyDirs="no" failonerror="false">
+			<fileset dir="${build.dist.dir}"/>
+		</copy>
+	</target>
+</project>

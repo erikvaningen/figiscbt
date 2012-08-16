@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   This build file provides junit service.
+   
+   One public target :
+     junit-impl
+     
+-->     
+<project default="junit-impl" name="junit">
+<!--
+	<property name="build.junit.fork" value="true"/>
+    <property name="build.junit.data.dir" location="${build.junit.dir}/data"/>
+    <property name="build.junit.reports.dir" location="${build.junit.dir}"/>
+-->
+	<echoproperties prefix="build.junit."/>
+	
+  <!--
+    ================================================
+
+      junit init
+ 
+    ================================================
+  -->
+  <target name="junit-init">
+    
+    <!-- create directories used for testing -->
+    <mkdir dir="${build.junit.dir}"/>
+    <mkdir dir="${build.junit.data.dir}"/>
+    <mkdir dir="${build.junit.reports.dir}"/>
+    <!-- Include common test bypass check condition>
+    <condition property="tests.uptodate">
+      <and>
+        <uptodate>
+          <srcfiles dir="${build.src.javadir}" includes="**/*.java"/>
+          <mapper type="glob" from="*.java" to="${build.compile.dir}/*.class"/>
+        </uptodate>
+        <uptodate>
+          <srcfiles dir="${test.src.dir}" includes="**/*.java"/>
+          <mapper type="glob" from="*.java" to="${bin.dir}/*.class"/>
+        </uptodate>
+        <uptodate>
+          <srcfiles dir="${test.src.dir}" excludes="**/*.java"/>
+          <mapper type="glob" from="*" to="${bin.dir}/*"/>
+        </uptodate>
+        <not>
+          <available file="${test.last.failed.file}"/>
+        </not>
+        <not>
+          <isset property="testcase"/>
+        </not>
+        <uptodate>
+          <srcfiles dir="${test.src.dir}" includes="**/*.java"/>
+          <mapper type="package" from="*Test.java" to="${junit.data.dir}/TEST-*Test.xml"/>
+        </uptodate>
+      </and>
+    </condition-->
+  </target>
+  <!--
+    ================================================
+
+      run-tests
+ 
+    ================================================
+  -->
+  <!--target name="junit-impl" depends="junit-init" unless="tests.uptodate"-->
+  <target name="junit-impl" depends="junit-init" unless="tests.uptodate">
+    <junit printsummary="yes" errorProperty="test.failed" failureProperty="test.failed" fork="${junit.fork}">
+      <classpath>
+		 <path location="${build.compile.dir}"/>
+      	 <path refid="module.classpath"/>
+      </classpath>
+      <formatter type="xml"/>
+      <formatter type="brief" usefile="false"/>
+      <test name="${build.junit.testcase}" todir="${build.junit.data.dir}" if="build.junit.testcase"/>
+      <batchtest todir="${build.junit.data.dir}" unless="build.junit.testcase">
+        <fileset dir="${build.compile.dir}" includes="**/*Test.class"/>
+      </batchtest>
+    </junit>
+    <junitreport todir="${build.junit.data.dir}">
+      <fileset dir="${build.junit.data.dir}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${build.junit.reports.dir}"/>
+    </junitreport>
+    <!-- create temporary file indicating these tests failed -->
+    <property name="test.last.failed.file" location="${build.junit.dir}/.lasttestsfailed"/>
+    <echo message="last build failed tests" file="${test.last.failed.file}"/>
+    <!--fail if="test.failed"/-->
+    <!-- Remove test failed file, as these tests succeeded -->
+    <delete file="${test.last.failed.file}"/>
+  </target>
+</project>

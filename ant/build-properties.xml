@@ -1,0 +1,69 @@
+<build>
+    <rep dir="//HQFILE1/figis/repository"/>
+    <lib dir="${build.rep.dir}/lib"/>
+    <home dir="${build.rep.dir}/modules/${build.module.name}/${build.module.release}"/>
+    <src dir="${build.home.dir}/src">
+        <java dir="${build.src.dir}/java"/>
+        <docs dir="${build.src.dir}/docs"/>
+        <dynamic dir="${build.src.dir}/dynamic"/>
+        <static dir="${build.src.dir}/static"/>
+        <properties dir="${build.src.dir}/properties"/>
+    </src>
+    <data dir="${build.home.dir}/data"/>
+    <dist dir="${build.home.dir}/dist" enabled="true">
+        <src dir="${build.dist.dir}/src" enabled="true">
+            <java dir="${build.dist.src.dir}/java"/>
+            <docs dir="${build.dist.src.dir}/docs"/>
+            <dynamic dir="${build.dist.src.dir}/dynamic"/>
+            <static dir="${build.dist.src.dir}/static"/>
+            <properties dir="${build.dist.src.dir}/properties"/>
+        </src>
+        <data dir="${build.dist.dir}/data" enabled="true"/>
+        <jdocs dir="${build.dist.dir}/jdocs" enabled="true"/>
+        <jars dir="${build.dist.dir}/jars" enabled="true"/>
+        <bundle dir="${build.dist.dir}/bundle" enabled="true"/>
+        <lib dir="${build.dist.dir}/lib" enabled="true"/>
+        <zip dir="${build.dist.dir}/zip" enabled="true"/>
+        <production 
+            dir="${build.rep.dir}/modules/${build.module.name}/PRO/dist" 
+            enabled="false"/>
+    </dist>
+    <build dir="${build.home.dir}/build" enabled="true"/>
+    <jars dir="${build.build.dir}/jars" enabled="true"/>
+    <bundle dir="${build.build.dir}/bundle" enabled="true"/>
+    <jdocs dir="${build.build.dir}/jdocs"/>
+    <api dir="${build.jdocs.dir}/api" enabled="true">
+        <source>1.5</source>
+        <protected>true</protected>
+        <verbose>true</verbose>
+    </api>
+    <docenhancer dir="${build.jdocs.dir}/docenhancer" enabled="false">
+        <home>//HQFILE1/figis/tools/docenhancer</home>
+    </docenhancer>
+    <java2html dir="${build.jdocs.dir}/java2html" enabled="true">
+        <home>//HQFILE1/figis/tools/java2html-1.3.1</home>
+    </java2html>
+    <jdepend dir="${build.jdocs.dir}/jdepend" enabled="true">
+        <home>//HQFILE1/figis/tools/jdepend-2.7</home>
+        <style file="${commonbuild.home.dir}/etc/jdepend.xsl"/>
+    </jdepend>
+    <junit dir="${build.jdocs.dir}/junit" enabled="true">
+        <fork>true</fork>
+        <data dir="${build.junit.dir}/data"/>
+        <reports dir="${build.junit.dir}"/>
+    </junit>
+    <checkstyle dir="${build.jdocs.dir}/checkstyle" enabled="true">
+        <home>//HQFILE1/figis/tools/checkstyle-3.4</home>
+        <checks file="${commonbuild.home.dir}/etc/figis-checks.xml"/>
+        <style file="${commonbuild.home.dir}/etc/checkstyle-noframes.xsl"/>
+    </checkstyle>
+    <rcscheckout dir="${build.home.dir}" enabled="true"/>
+    <compile dir="${build.build.dir}/classes" enabled="true">
+        <debug>on</debug>
+        <optimize>off</optimize>
+        <source>1.5</source>
+        <target>1.5</target>
+        <deprecation>off</deprecation>
+    </compile>
+    <deploy target="${build.home.dir}/deploy" enabled="false"/>
+</build>

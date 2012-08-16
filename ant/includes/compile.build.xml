@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   This build file provides compile service.
+   
+   One public target :
+     compile-impl
+     
+-->     
+<project name="compile" default="compile-impl">
+<!--
+	<property name="build.compile.debug" value="off"/>
+	<property name="build.compile.optimize" value="off"/>
+	<property name="build.compile.source" value="1.4"/>
+	<property name="build.compile.target" value="1.4"/>
+	<property name="build.compile.deprecation" value="off"/>
+-->
+	<echoproperties prefix="build.compile."/>
+
+	<!-- 
+    compile-java 
+	-->
+	<target name="compile-impl">
+		<javac srcdir="${build.src.java.dir}" 
+			destdir="${build.compile.dir}"
+			debug="${build.compile.debug}"
+			deprecation="${build.compile.deprecation}"
+			optimize="${build.compile.optimize}"
+			source="${build.compile.source}"
+			target="${build.compile.target}"
+			>
+			<classpath refid="module.classpath"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
+</project>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   This build file provide java2html service
+   
+   One public target :
+     java2html-impl
+     
+-->     
+<project default="java2html-impl" name="java2html">
+<!--
+    property name="build.java2html.home" location="//HQFILE1/figis/tools/java2html-1.3.1"/>
+-->
+	<echoproperties prefix="build.java2html."/>
+	
+  <!--
+    ================================================
+	  
+      java2html 
+    
+    ================================================
+  -->
+  <target name="java2html-impl" 
+          depends="java2html-check-uptodate, java2html-generate"
+          description="Generates source java files in the html format"/>
+  <target name="java2html-check-uptodate">
+    <uptodate property="java2html.uptodate" targetfile="${build.java2html.dir}/java2html.build.number">
+      <srcfiles dir="${build.src.java.dir}" includes="**/*.java"/>
+    </uptodate>
+  </target>
+  <target name="java2html-generate" unless="java2html.uptodate">
+    <!-- Create the src_html directory	-->
+    <mkdir dir="${build.java2html.dir}"/>
+    <!--
+      java2html with taskdef
+    <path id="java2html.classpath">
+      <fileset dir="${java2html.home}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </path>
+    <taskdef name="java2html" classname="com.java2html.Java2HTMLTask" classpathref="java2html.classpath"/>
+    <java2html title="${project.name}" 
+               simple="no"
+               tabsize="2"
+               marginsize="2"
+               header="true"
+               footer="false"
+               destination="${javasrc.dir}">
+      <fileset dir="${java.src.dir}">
+        <include name="**/*.java"/>
+      </fileset>
+      <javadoc localRef="${java.home}/docs/api" httpRef="http://java.sun.com/products/jdk/1.4/docs/api/"/>
+      <javadoc localRef="${javadoc.dir}" httpRef="${project.url.javadoc}"/>
+    </java2html>
+    -->
+    <java classname="j2h" fork="true" failonerror="true" maxmemory="128m">
+      <classpath>
+        <fileset dir="${build.java2html.home}">
+          <include name="**/*.jar"/>
+        </fileset>
+        <path refid="module.classpath"/>
+      </classpath>
+      <arg line="-d ${build.java2html.dir}"/>
+      <arg line="-js ${build.src.java.dir}"/>
+      <arg line="-jd ${build.api.dir}"/>
+      <arg line="-t 2"/>
+      <arg line="-m 4"/>
+      <arg line='-n "${build.module.name}"'/>
+    </java>
+    <!-- create the file that stamp the date the files have been generated -->
+    <buildnumber file="${build.java2html.dir}/java2html.build.number"/>
+  </target>
+</project>
