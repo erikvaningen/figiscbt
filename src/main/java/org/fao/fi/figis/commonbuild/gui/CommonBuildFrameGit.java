@@ -632,6 +632,7 @@ public class CommonBuildFrameGit extends JFrame {
 		project.setProperty("user.xmlproperties.file", userPropertiesFilename);
 		project.setProperty("ant.file.build", properties.getProperty(BUILD_FILE_PROP));
 		project.init();
+		gitCheckout.init(); 
 		PrintStream ps = new PrintStream(new FileOutputStream(userDir + "/" + moduleName + "-" + moduleRelease
 				+ "-build.log"));
 		BuildLogger logger = new DefaultLogger();
@@ -642,6 +643,7 @@ public class CommonBuildFrameGit extends JFrame {
 		System.setErr(ps);
 		logger.setEmacsMode(true);
 		project.addBuildListener(logger);
+		gitCheckout.addBuildListener(logger);
 		BuildListener listener = new BuildListener() {
 
 			public void buildStarted(BuildEvent arg0) {
@@ -679,6 +681,7 @@ public class CommonBuildFrameGit extends JFrame {
 		progressBar.setIndeterminate(true);
 		progressBar.setString("Building...");
 		try {
+			gitCheckout.executeTarget(ALL_TARGET);
 			project.executeTarget(ALL_TARGET);
 			if (deployCheckBox.isSelected()) {
 				trackDeployment(deployment_target_dir, moduleName, moduleRelease);
