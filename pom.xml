@@ -15,5 +15,15 @@
   		<artifactId>ant-optional</artifactId>
   		<version>1.5.3-1</version>
   	</dependency>
+  	<dependency>
+  		<groupId>org.eclipse.jgit</groupId>
+  		<artifactId>org.eclipse.jgit</artifactId>
+  		<version>2.0.0.201206130900-r</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.10</version>
+  	</dependency>
   </dependencies>
 </project>
