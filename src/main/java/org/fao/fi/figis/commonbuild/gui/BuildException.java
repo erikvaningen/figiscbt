@@ -6,6 +6,10 @@ public class BuildException extends RuntimeException {
 		super(e);
 	}
 
+	public BuildException(String string) {
+		super(string);
+	}
+
 	/**
 	 * 
 	 */

@@ -74,7 +74,7 @@ import org.apache.tools.ant.ProjectHelper;
  */
 public class CommonBuildFrameGit extends JFrame {
 
-	GitCheckout gitCheckout = new GitCheckout(); 
+	FigisCheckout gitCheckout = new FigisCheckout(); 
 	
 	
 	/**
