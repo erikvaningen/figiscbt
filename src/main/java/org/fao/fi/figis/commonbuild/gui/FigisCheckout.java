@@ -15,11 +15,11 @@ public class FigisCheckout {
 	public static final String URI_POST = ".git";
 
 	private boolean execute;
-	private String gitDir;
-	private String gitSrcDir;
-	private File gitSrcDirFile;
+	// private String gitDir;
+	// private String gitSrcDir;
+	// private File gitSrcDirFile;
 	private File gitDirFile;
-	private String allTarget;
+	// private String allTarget;
 	private String tag;
 	private String moduleName;
 	private FileAndUILogger fileAndUILogger;
@@ -88,15 +88,15 @@ public class FigisCheckout {
 	}
 
 	public FigisCheckout setGitDir(String gitDir) {
-		this.gitDir = gitDir;
+		// this.gitDir = gitDir;
 		this.gitDirFile = new File(gitDir);
 		System.out.println("setGitDir");
 		return this;
 	}
 
 	public FigisCheckout setGitSrcDir(String gitSrcDir) {
-		this.gitSrcDir = gitSrcDir;
-		this.gitSrcDirFile = new File(gitSrcDir);
+		// this.gitSrcDir = gitSrcDir;
+		// this.gitSrcDirFile = new File(gitSrcDir);
 		System.out.println("setGitSrcDir");
 		return this;
 	}
