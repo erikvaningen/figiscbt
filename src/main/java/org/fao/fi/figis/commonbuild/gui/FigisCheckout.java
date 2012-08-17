@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.tools.ant.BuildLogger;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -12,7 +11,8 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 
 public class FigisCheckout {
 
-	public static final String URI = "git://github.com/erikvaningen/figistry.git";
+	public static final String URI_PRE = "git://github.com/erikvaningen/";
+	public static final String URI_POST = ".git";
 
 	private boolean execute;
 	private String gitDir;
@@ -21,8 +21,12 @@ public class FigisCheckout {
 	private File gitDirFile;
 	private String allTarget;
 	private String tag;
+	private String moduleName;
+	private FileAndUILogger fileAndUILogger;
 
-	private BuildLogger buildLogger;
+	public void setFileAndUILogger(FileAndUILogger fileAndUILogger) {
+		this.fileAndUILogger = fileAndUILogger;
+	}
 
 	/**
 	 * Most probably this is the process step where it is all happening.
@@ -33,49 +37,42 @@ public class FigisCheckout {
 		System.out.println("init");
 		if (execute) {
 			try {
-				if (tag == null || gitDirFile == null) {
-					throw new BuildException("tag or gitDirFile is null");
+				if (tag == null) {
+					String message = "tag is null";
+					fileAndUILogger.sendMessage(message);
+					throw new BuildException(message);
+				}
+				if (gitDirFile == null) {
+					String message = "gitDirFile is null";
+					fileAndUILogger.sendMessage(message);
+					throw new BuildException(message);
 				}
 				CloneCommand clone = Git.cloneRepository();
-				FileUtils.deleteDirectory(gitDirFile);
 				String refTag = "refs/tags/" + tag;
-				System.out.println("checking out tag " + refTag);
-				clone.setURI(URI).setDirectory(gitDirFile).setBranch(refTag);
-				clone.call();
+				String uri = URI_PRE + moduleName + URI_POST;
+				FileUtils.deleteDirectory(gitDirFile);
+				fileAndUILogger.sendMessage("checking out tag " + refTag);
+				clone.setURI(uri).setDirectory(gitDirFile).setBranch(refTag);
+				Git db = clone.call();
+				if (!db.getRepository().getTags().containsKey(tag)) {
+					FileUtils.deleteDirectory(gitDirFile);
+					String message = "the tag " + refTag + " does not exist";
+					fileAndUILogger.sendMessage(message);
+					throw new BuildException(message);
+				}
 			} catch (InvalidRemoteException e) {
 				e.printStackTrace();
+				fileAndUILogger.sendMessage(e.getMessage());
 				throw new BuildException(e);
 			} catch (GitAPIException e) {
 				e.printStackTrace();
+				fileAndUILogger.sendMessage(e.getMessage());
 				throw new BuildException(e);
 			} catch (IOException e) {
 				e.printStackTrace();
+				fileAndUILogger.sendMessage(e.getMessage());
 				throw new BuildException(e);
 			}
-		}
-	}
-
-	/**
-	 * Clone the repo when not yet exist.
-	 */
-	private void cloneRepo() {
-		try {
-			CloneCommand clone = Git.cloneRepository();
-			FileUtils.deleteDirectory(gitDirFile);
-
-			String refTag = "refs/tags/" + tag;
-			clone.setURI(URI).setDirectory(gitDirFile).setBranch(refTag);
-			// clone.setURI(URI).setDirectory(gitDirFile).setBare(false);
-			clone.call();
-		} catch (InvalidRemoteException e) {
-			e.printStackTrace();
-			throw new BuildException(e);
-		} catch (GitAPIException e) {
-			e.printStackTrace();
-			throw new BuildException(e);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new BuildException(e);
 		}
 	}
 
@@ -106,12 +103,11 @@ public class FigisCheckout {
 
 	public void executeTarget(String allTarget) {
 		System.out.println("executeTarget");
-
 	}
 
-	public void addBuildListener(BuildLogger logger) {
-		this.buildLogger = logger;
-		System.out.println("addBuildListener");
+	public FigisCheckout setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+		return this;
 	}
 
 }

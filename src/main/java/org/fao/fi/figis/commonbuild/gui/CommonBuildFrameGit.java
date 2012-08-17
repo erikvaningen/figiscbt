@@ -74,15 +74,14 @@ import org.apache.tools.ant.ProjectHelper;
  */
 public class CommonBuildFrameGit extends JFrame {
 
-	FigisCheckout gitCheckout = new FigisCheckout(); 
-	
-	
+	FigisCheckout gitCheckout = new FigisCheckout();
+	FileAndUILogger fileAndUILogger = new FileAndUILogger();
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 6955001468778707292L;
 
-	private ButtonGroup buttonGroup = new ButtonGroup();
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	private JRadioButton deployRadioButton;
 
@@ -137,7 +136,7 @@ public class CommonBuildFrameGit extends JFrame {
 	private static final String DEPLOYMENT_FILE_TMP = DEPLOYMENT_TRACK_DIR + "/deployment-file.tmp";
 
 	private static final String RELEASE_DIR = "C:/workspaces/junoCbt/figiscbt/figis/deployments";
-//	private static final String RELEASE_DIR = "//HQFILE1/figis/deployments";
+	// private static final String RELEASE_DIR = "//HQFILE1/figis/deployments";
 
 	private JCheckBox buildFigisCheckBox;
 
@@ -337,6 +336,7 @@ public class CommonBuildFrameGit extends JFrame {
 								if (choice == JOptionPane.YES_OPTION) {
 									SwingWorker worker = new SwingWorker() {
 
+										@Override
 										public Object construct() {
 											try {
 												csgitMark(the_module_name, the_module_release);
@@ -567,21 +567,22 @@ public class CommonBuildFrameGit extends JFrame {
 		Project project = new Project();
 		project.setProperty("build.module.name", moduleName);
 		project.setProperty("build.module.release", moduleRelease);
+		gitCheckout.setModuleName(moduleName);
+		gitCheckout.setTag(moduleRelease);
 		if (!defaultPropertiesCheckBox.isSelected()) {
+			gitCheckout.setGitDir(git_dir);
+			gitCheckout.setGitSrcDir(git_dir + "/src");
 			if (gitCheckBox.isSelected()) {
 				project.setProperty("build.gitcheckout.enabled", "false");
 				if (!building_figis) {
 					project.setProperty("build.gitcheckout.dir", git_dir);
 					project.setProperty("build.src.dir", git_dir + "/src");
 					gitCheckout.setExecute(true);
-					gitCheckout.setGitDir(git_dir);
-					gitCheckout.setGitSrcDir(git_dir + "/src"); 
 				}
 			} else {
 				project.setProperty("build.gitcheckout.enabled", "false");
 				if (!building_figis) {
 					project.setProperty("build.src.dir", src_dir);
-					gitCheckout.setGitSrcDir(git_dir + "/src"); 
 					gitCheckout.setExecute(false);
 				}
 			}
@@ -632,9 +633,11 @@ public class CommonBuildFrameGit extends JFrame {
 		project.setProperty("user.xmlproperties.file", userPropertiesFilename);
 		project.setProperty("ant.file.build", properties.getProperty(BUILD_FILE_PROP));
 		project.init();
-		gitCheckout.init(); 
 		PrintStream ps = new PrintStream(new FileOutputStream(userDir + "/" + moduleName + "-" + moduleRelease
 				+ "-build.log"));
+		fileAndUILogger.setPrintStream(ps);
+		gitCheckout.init();
+
 		BuildLogger logger = new DefaultLogger();
 		logger.setMessageOutputLevel(Project.MSG_INFO);
 		logger.setOutputPrintStream(ps);
@@ -643,7 +646,7 @@ public class CommonBuildFrameGit extends JFrame {
 		System.setErr(ps);
 		logger.setEmacsMode(true);
 		project.addBuildListener(logger);
-		gitCheckout.addBuildListener(logger);
+
 		BuildListener listener = new BuildListener() {
 
 			public void buildStarted(BuildEvent arg0) {
@@ -901,6 +904,7 @@ public class CommonBuildFrameGit extends JFrame {
 		propertiesFile = new File(DEFAULT_PROPERTIES_FILE);
 		userDir = properties.getProperty(USERS_DIR_PROP) + "/" + System.getProperties().getProperty("user.name");
 		createUserDir();
+		gitCheckout.setFileAndUILogger(fileAndUILogger);
 	}
 
 	private void csgitMark(String module, String release) throws Exception {
@@ -1007,6 +1011,7 @@ public class CommonBuildFrameGit extends JFrame {
 									if (choice == JOptionPane.YES_OPTION) {
 										SwingWorker worker = new SwingWorker() {
 
+											@Override
 											public Object construct() {
 												try {
 													csgitMark(module, new_release);
@@ -1579,6 +1584,7 @@ public class CommonBuildFrameGit extends JFrame {
 					panel.add(outputScrollPane);
 					{
 						outputTextArea = new JTextArea();
+						fileAndUILogger.setOutputTextArea(outputTextArea);
 						outputTextArea.setEditable(false);
 						outputScrollPane.setViewportView(outputTextArea);
 					}
@@ -1603,6 +1609,7 @@ public class CommonBuildFrameGit extends JFrame {
 				tabbedPane.setSelectedIndex(OUTPUT_INDEX);
 				buildWorker = new SwingWorker() {
 
+					@Override
 					public Object construct() {
 						build();
 						return "OK";
