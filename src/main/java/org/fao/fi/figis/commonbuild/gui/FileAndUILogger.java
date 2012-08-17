@@ -22,7 +22,9 @@ public class FileAndUILogger {
 		if (printStream != null) {
 			printStream.print(message);
 		}
-		outputTextArea.append(message);
+		if (outputTextArea != null) {
+			outputTextArea.append(message);
+		}
 	}
 
 }
