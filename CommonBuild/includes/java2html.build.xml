@@ -31,28 +31,6 @@
   <target name="java2html-generate" unless="java2html.uptodate">
     <!-- Create the src_html directory	-->
     <mkdir dir="${build.java2html.dir}"/>
-    <!--
-      java2html with taskdef
-    <path id="java2html.classpath">
-      <fileset dir="${java2html.home}">
-        <include name="**/*.jar"/>
-      </fileset>
-    </path>
-    <taskdef name="java2html" classname="com.java2html.Java2HTMLTask" classpathref="java2html.classpath"/>
-    <java2html title="${project.name}" 
-               simple="no"
-               tabsize="2"
-               marginsize="2"
-               header="true"
-               footer="false"
-               destination="${javasrc.dir}">
-      <fileset dir="${java.src.dir}">
-        <include name="**/*.java"/>
-      </fileset>
-      <javadoc localRef="${java.home}/docs/api" httpRef="http://java.sun.com/products/jdk/1.4/docs/api/"/>
-      <javadoc localRef="${javadoc.dir}" httpRef="${project.url.javadoc}"/>
-    </java2html>
-    -->
     <java classname="j2h" fork="true" failonerror="true" maxmemory="128m">
       <classpath>
         <fileset dir="${build.java2html.home}">
