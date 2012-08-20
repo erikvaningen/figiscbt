@@ -1,34 +1,106 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.fao.figis</groupId>
-  <artifactId>figiscbt</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <dependencies>
-  	<dependency>
-  		<groupId>ant</groupId>
-  		<artifactId>ant</artifactId>
-  		<version>1.7.0</version>
-  	</dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.fao.figis</groupId>
+	<artifactId>figiscbt</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 
-  	<dependency>
-  		<groupId>ant</groupId>
-  		<artifactId>ant-optional</artifactId>
-  		<version>1.5.3-1</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.eclipse.jgit</groupId>
-  		<artifactId>org.eclipse.jgit</artifactId>
-  		<version>2.0.0.201206130900-r</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>junit</groupId>
-  		<artifactId>junit</artifactId>
-  		<version>4.10</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>commons-io</groupId>
-  		<artifactId>commons-io</artifactId>
-  		<version>2.4</version>
-  	</dependency>
-  </dependencies>
+
+
+	<repositories>
+		<repository>
+			<id>jfrog-third-party-releases</id>
+			<name>The jfrog repository for 3rd party releases</name>
+			<url>http://repo.jfrog.org/artifactory/third-party-releases-local</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jfrog-plugins-dist</id>
+			<name>jfrog-plugins-dist</name>
+			<url>http://repo.jfrog.org/artifactory/plugins-releases-local</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ant</groupId>
+			<artifactId>ant-optional</artifactId>
+			<version>1.5.3-1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>2.0.0.201206130900-r</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.1</version>
+
+		</dependency>
+
+	</dependencies>
+
+
+	<build>
+		<plugins>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jfrog.maven.plugins</groupId>
+				<artifactId>jfrog-jnlp-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jnlp</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<templateFile>master.jnlp</templateFile>
+					<targetFile>launcher.jnlp</targetFile>
+					<verbose>true</verbose>
+					<mainClass>org.fao.fi.figis.commonbuild.gui.CommonBuildFrameGit</mainClass>
+					<useMavenLayout>true</useMavenLayout>
+					<attach>true</attach>
+					<additionalParameters>
+						<iconRef>myapp.png</iconRef>
+					</additionalParameters>
+					<excludes>
+						<exclude>log4j</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
 </project>
