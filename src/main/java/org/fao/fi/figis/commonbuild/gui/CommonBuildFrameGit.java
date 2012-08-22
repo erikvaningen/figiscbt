@@ -133,8 +133,9 @@ public class CommonBuildFrameGit extends JFrame {
 
 	private static final String DEPLOYMENT_FILE_TMP = DEPLOYMENT_TRACK_DIR + "/deployment-file.tmp";
 
-	private static final String RELEASE_DIR = "C:/workspaces/junoCbt/figiscbt/figis/deployments";
-	// private static final String RELEASE_DIR = "//HQFILE1/figis/deployments";
+	// private static final String RELEASE_DIR =
+	// "C:/workspaces/junoCbt/figiscbt/figis/deployments";
+	private static final String RELEASE_DIR = "//HQFILE1/figis/deployments";
 
 	private JCheckBox buildFigisCheckBox;
 
@@ -569,7 +570,6 @@ public class CommonBuildFrameGit extends JFrame {
 		gitCheckout.setTag(moduleRelease);
 		if (!defaultPropertiesCheckBox.isSelected()) {
 			gitCheckout.setGitDir(git_dir);
-			gitCheckout.setGitSrcDir(git_dir + "/src");
 			if (gitCheckBox.isSelected()) {
 				project.setProperty("build.gitcheckout.enabled", "false");
 				if (!building_figis) {

@@ -9,9 +9,8 @@ import org.junit.Test;
 public class FigisCheckoutTest {
 
 	FigisCheckout g = new FigisCheckout();
-	String gitDir = "../localRepository/hond";
-	String srcGitDir = gitDir + "src";
-	String tag = "0_0_1";
+	String tag = "0_0_3";
+	String gitDir = "../localRepository/hond/" + tag;
 	String moduleName = "figistry";
 	boolean execute = true;
 	FileAndUILogger log = new FileAndUILogger();
@@ -19,7 +18,7 @@ public class FigisCheckoutTest {
 	@Test
 	public void testInit() {
 		g.setFileAndUILogger(log);
-		g.setModuleName(moduleName).setExecute(execute).setGitDir(gitDir).setGitSrcDir(srcGitDir).setTag(tag);
+		g.setModuleName(moduleName).setExecute(execute).setGitDir(gitDir).setTag(tag);
 		g.init();
 		File gitDirFile = new File(gitDir);
 		System.out.println(gitDirFile.getAbsolutePath());
