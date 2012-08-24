@@ -1,8 +1,7 @@
 package org.fao.figis.cbt.server;
 
+import org.fao.figis.cbt.client.GreetingService;
 import org.fao.figis.cbt.shared.FieldVerifier;
-import org.fao.figis.web.client.GreetingService;
-
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

@@ -36,8 +36,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.7</version>
-      <scope>test</scope>
+      <version>4.10</version>
     </dependency>
     <dependency>
       <groupId>javax.validation</groupId>
@@ -80,7 +79,7 @@
         <configuration>
           <runTarget>CBT.html</runTarget>
           <hostedWebapp>${webappDirectory}</hostedWebapp>
-          <i18nMessagesBundle>org.fao.figis.web.client.Messages</i18nMessagesBundle>
+          <i18nMessagesBundle>org.fao.figis.cbt.client.Messages</i18nMessagesBundle>
         </configuration>
       </plugin>
 
@@ -111,6 +110,36 @@
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+    	<plugins>
+    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+    		<plugin>
+    			<groupId>org.eclipse.m2e</groupId>
+    			<artifactId>lifecycle-mapping</artifactId>
+    			<version>1.0.0</version>
+    			<configuration>
+    				<lifecycleMappingMetadata>
+    					<pluginExecutions>
+    						<pluginExecution>
+    							<pluginExecutionFilter>
+    								<groupId>org.codehaus.mojo</groupId>
+    								<artifactId>gwt-maven-plugin</artifactId>
+    								<versionRange>[2.5.0-rc1,)</versionRange>
+    								<goals>
+    									<goal>generateAsync</goal>
+    									<goal>i18n</goal>
+    								</goals>
+    							</pluginExecutionFilter>
+    							<action>
+    								<ignore></ignore>
+    							</action>
+    						</pluginExecution>
+    					</pluginExecutions>
+    				</lifecycleMappingMetadata>
+    			</configuration>
+    		</plugin>
+    	</plugins>
+    </pluginManagement>
   </build>
 
 </project>

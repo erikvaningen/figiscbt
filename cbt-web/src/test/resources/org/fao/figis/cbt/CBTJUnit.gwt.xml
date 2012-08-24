@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
   <!-- Inherit our applications main module.                      -->
-  <inherits name='org.fao.figis.cbt.cbt-web' />
+  <inherits name='org.fao.figis.cbt.CBT' />
 
   <!-- Specify the path to any remote services.                   -->
-  <servlet path="/cbt-web/greet" class="org.fao.figis.cbt.server.GreetingServiceImpl" />
+  <servlet path="/CBT/greet" class="org.fao.figis.cbt.server.GreetingServiceImpl" />
 
 </module>
