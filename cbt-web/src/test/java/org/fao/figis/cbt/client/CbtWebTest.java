@@ -2,6 +2,7 @@ package org.fao.figis.cbt.client;
 
 import org.fao.figis.cbt.service.GreetingServiceAsync;
 import org.fao.figis.cbt.shared.FieldVerifier;
+import org.fao.figis.web.client.GreetingService;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;

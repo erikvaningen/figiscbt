@@ -8,17 +8,17 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-    <servlet-class>org.fao.figis.cbt.server.GreetingServiceImpl</servlet-class>
+    <servlet-class>org.fao.figis.web.server.GreetingServiceImpl</servlet-class>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/cbt-web/greet</url-pattern>
+    <url-pattern>/CBT/greet</url-pattern>
   </servlet-mapping>
 
   <!-- Default page to serve -->
   <welcome-file-list>
-    <welcome-file>cbt-web.html</welcome-file>
+    <welcome-file>CBT.html</welcome-file>
   </welcome-file-list>
 
 </web-app>

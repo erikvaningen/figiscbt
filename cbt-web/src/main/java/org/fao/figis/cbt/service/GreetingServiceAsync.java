@@ -1,6 +1,6 @@
 package org.fao.figis.cbt.service;
 
-import org.fao.figis.cbt.client.GreetingService;
+import org.fao.figis.web.client.GreetingService;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
