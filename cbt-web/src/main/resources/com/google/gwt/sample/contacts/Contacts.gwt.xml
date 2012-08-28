@@ -4,7 +4,7 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.gwt.user.theme.standard.Standard'/>
   
-  <entry-point class='com.google.gwt.sample.contacts.client.Contacts'/>
+  <entry-point class='org.fao.figis.cbt.web.client.Contacts'/>
 
   <source path='client'/>
   <source path='shared'/>

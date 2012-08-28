@@ -7,7 +7,7 @@
   
   <servlet>
     <servlet-name>contactsServiceServlet</servlet-name>
-    <servlet-class>com.google.gwt.sample.contacts.server.ContactsServiceImpl</servlet-class>
+    <servlet-class>org.fao.figis.cbt.server.ContactsServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
