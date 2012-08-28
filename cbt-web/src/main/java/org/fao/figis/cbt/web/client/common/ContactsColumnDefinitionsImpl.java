@@ -1,9 +1,10 @@
 package org.fao.figis.cbt.web.client.common;
 
-import com.google.gwt.sample.contacts.shared.ContactDetails;
 //import com.google.gwt.user.client.ui.CheckBox;
 //import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
+
+import org.fao.figis.cbt.shared.ContactDetails;
 
 @SuppressWarnings("serial")
 public class ContactsColumnDefinitionsImpl extends 

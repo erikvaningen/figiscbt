@@ -1,4 +1,4 @@
-package com.google.gwt.sample.contacts.shared;
+package org.fao.figis.cbt.shared;
 
 import java.io.Serializable;
 import com.google.gwt.user.client.rpc.IsSerializable;

@@ -1,8 +1,9 @@
 package org.fao.figis.cbt.web.client.common;
 
-import com.google.gwt.sample.contacts.shared.ContactDetails;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.fao.figis.cbt.shared.ContactDetails;
 
 public class ContactsColumnDefinitionsFactory<T> {
   public static List<ColumnDefinition<ContactDetails>> 

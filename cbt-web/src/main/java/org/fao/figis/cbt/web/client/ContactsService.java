@@ -4,8 +4,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.ArrayList;
 
-import com.google.gwt.sample.contacts.shared.Contact;
-import com.google.gwt.sample.contacts.shared.ContactDetails;
+import org.fao.figis.cbt.shared.Contact;
+import org.fao.figis.cbt.shared.ContactDetails;
+
 
 @RemoteServiceRelativePath("contactsService")
 public interface ContactsService extends RemoteService {

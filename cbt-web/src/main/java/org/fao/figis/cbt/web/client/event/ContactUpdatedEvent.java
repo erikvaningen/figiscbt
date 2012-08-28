@@ -1,7 +1,8 @@
 package org.fao.figis.cbt.web.client.event;
 
+import org.fao.figis.cbt.shared.Contact;
+
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.sample.contacts.shared.Contact;
 
 public class ContactUpdatedEvent extends GwtEvent<ContactUpdatedEventHandler>{
   public static Type<ContactUpdatedEventHandler> TYPE = new Type<ContactUpdatedEventHandler>();

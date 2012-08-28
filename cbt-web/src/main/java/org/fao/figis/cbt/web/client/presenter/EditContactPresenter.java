@@ -1,5 +1,6 @@
 package org.fao.figis.cbt.web.client.presenter;
 
+import org.fao.figis.cbt.shared.Contact;
 import org.fao.figis.cbt.web.client.ContactsServiceAsync;
 import org.fao.figis.cbt.web.client.event.ContactUpdatedEvent;
 import org.fao.figis.cbt.web.client.event.EditContactCancelledEvent;
@@ -13,7 +14,6 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.sample.contacts.shared.Contact;
 
 public class EditContactPresenter implements Presenter{  
   public interface Display {

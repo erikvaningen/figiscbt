@@ -1,5 +1,6 @@
 package org.fao.figis.cbt.web.client;
 
+import org.fao.figis.cbt.shared.ContactDetails;
 import org.fao.figis.cbt.web.client.common.ContactsColumnDefinitionsFactory;
 import org.fao.figis.cbt.web.client.event.AddContactEvent;
 import org.fao.figis.cbt.web.client.event.AddContactEventHandler;
@@ -15,7 +16,6 @@ import org.fao.figis.cbt.web.client.presenter.Presenter;
 import org.fao.figis.cbt.web.client.view.ContactsViewImpl;
 import org.fao.figis.cbt.web.client.view.EditContactView;
 
-import com.google.gwt.sample.contacts.shared.ContactDetails;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;

@@ -1,6 +1,5 @@
 package org.fao.figis.cbt.web.client.presenter;
 
-import com.google.gwt.sample.contacts.shared.ContactDetails;
 
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
@@ -10,6 +9,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.fao.figis.cbt.shared.ContactDetails;
 import org.fao.figis.cbt.web.client.ContactsServiceAsync;
 import org.fao.figis.cbt.web.client.common.ColumnDefinition;
 import org.fao.figis.cbt.web.client.common.SelectionModel;

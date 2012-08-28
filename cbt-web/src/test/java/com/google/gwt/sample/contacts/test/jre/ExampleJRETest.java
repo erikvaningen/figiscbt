@@ -1,6 +1,5 @@
 package com.google.gwt.sample.contacts.test.jre;
 
-import com.google.gwt.sample.contacts.shared.ContactDetails;
 
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -13,6 +12,7 @@ import junit.framework.TestCase;
 import static org.easymock.EasyMock.*;
 
 import org.easymock.*;
+import org.fao.figis.cbt.shared.ContactDetails;
 import org.fao.figis.cbt.web.client.ContactsServiceAsync;
 import org.fao.figis.cbt.web.client.common.ContactsColumnDefinitionsFactory;
 import org.fao.figis.cbt.web.client.presenter.ContactsPresenter;
