@@ -1,22 +1,27 @@
 package com.google.gwt.sample.contacts.test.jre;
 
 
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import static org.easymock.EasyMock.createStrictMock;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.getCurrentArguments;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
 
-import static org.easymock.EasyMock.*;
-
-import org.easymock.*;
+import org.easymock.IAnswer;
 import org.fao.figis.cbt.shared.ContactDetails;
 import org.fao.figis.cbt.web.client.ContactsServiceAsync;
 import org.fao.figis.cbt.web.client.common.ContactsColumnDefinitionsFactory;
 import org.fao.figis.cbt.web.client.presenter.ContactsPresenter;
 import org.fao.figis.cbt.web.client.view.ContactsView;
+
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ExampleJRETest extends TestCase {
 

@@ -16,7 +16,6 @@ import org.fao.figis.cbt.web.client.presenter.Presenter;
 import org.fao.figis.cbt.web.client.view.ContactsViewImpl;
 import org.fao.figis.cbt.web.client.view.EditContactView;
 
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

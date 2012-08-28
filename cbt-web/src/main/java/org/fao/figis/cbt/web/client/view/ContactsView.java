@@ -1,11 +1,11 @@
 package org.fao.figis.cbt.web.client.view;
 
 
-import com.google.gwt.user.client.ui.Widget;
-
 import java.util.List;
 
 import org.fao.figis.cbt.web.client.common.ColumnDefinition;
+
+import com.google.gwt.user.client.ui.Widget;
 
 public interface ContactsView<T> {
 

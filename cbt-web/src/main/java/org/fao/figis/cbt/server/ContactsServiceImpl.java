@@ -1,7 +1,5 @@
 package org.fao.figis.cbt.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +7,8 @@ import java.util.Iterator;
 import org.fao.figis.cbt.shared.Contact;
 import org.fao.figis.cbt.shared.ContactDetails;
 import org.fao.figis.cbt.web.client.ContactsService;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @SuppressWarnings("serial")
 public class ContactsServiceImpl extends RemoteServiceServlet implements

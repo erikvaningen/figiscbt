@@ -1,11 +1,6 @@
 package org.fao.figis.cbt.web.client.presenter;
 
 
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasWidgets;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +11,11 @@ import org.fao.figis.cbt.web.client.common.SelectionModel;
 import org.fao.figis.cbt.web.client.event.AddContactEvent;
 import org.fao.figis.cbt.web.client.event.EditContactEvent;
 import org.fao.figis.cbt.web.client.view.ContactsView;
+
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasWidgets;
 
 public class ContactsPresenter implements Presenter, 
   ContactsView.Presenter<ContactDetails> {  

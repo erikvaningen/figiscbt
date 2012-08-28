@@ -1,10 +1,11 @@
 package org.fao.figis.cbt.web.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 
 import org.fao.figis.cbt.shared.Contact;
 import org.fao.figis.cbt.shared.ContactDetails;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
 public interface ContactsServiceAsync {
